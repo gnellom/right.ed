@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>right.ed - Modern Legal Assistant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .category-chip {
+            transition: all 0.2s ease;
+            transform: scale(1);
+        }
+
+        .category-chip:hover {
+            transform: scale(1.02);
+        }
+
+        .category-chip.selected {
+            background-color: #234441;
+            color: white;
+            box-shadow: 0 2px 4px rgba(35, 68, 65, 0.2);
+        }
+
+        #query-input {
+            min-height: 56px;
+            max-height: 200px;
+            overflow-y: auto;
+            resize: none;
+            transition: all 0.2s ease;
+        }
+
+        #query-input:focus {
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        }
+
+        .message-bubble {
+            max-width: 85%;
+            animation: messageAppear 0.3s ease-out;
+        }
+
+        @keyframes messageAppear {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .user-message {
+            margin-left: auto;
+            background: #2563eb;
+            color: white;
+        }
+
+        .bot-message {
+            background: #f3f4f6;
+            color: #1f2937;
+        }
+
+        .sidebar-content {
+            height: calc(100vh - 140px);
+            overflow-y: auto;
+        }
+
+        .info-tab {
+            transition: all 0.2s ease;
+        }
+
+        .info-tab.active {
+            background-color: #234441;
+            color: white;
+        }
+
+        .source-card {
+            transition: all 0.2s ease;
+        }
+
+        .source-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #c5c5c5;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                top: 64px;
+                bottom: 0;
+                width: 100%;
+                max-width: 100%;
+                z-index: 50;
+                transition: transform 0.3s ease-in-out;
+            }
+
+            .left-sidebar {
+                left: 0;
+                transform: translateX(-100%);
+            }
+
+            .right-sidebar {
+                right: 0;
+                transform: translateX(100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .message-bubble {
+                max-width: 90%;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Modern Header -->
+    <header class="bg-white border-b border-gray-200 fixed top-0 w-full z-50">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <button id="toggle-categories" class="md:hidden p-2 hover:bg-gray-100 rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+                <div class="flex items-center space-x-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-[#234441]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
+                    </svg>
+                    <div>
+                        <h1 class="text-xl font-bold text-gray-900">right.ed</h1>
+                        <p class="text-sm text-gray-500 hidden sm:block">Student Justice Alliance</p>
+                    </div>
+                </div>
+            </div>
+            <button id="toggle-info" class="md:hidden p-2 hover:bg-gray-100 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto flex h-screen pt-16">
+        <!-- Categories Sidebar -->
+        <aside id="categories-sidebar" class="sidebar left-sidebar w-full md:w-1/4 bg-white p-4 lg:p-6 border-r border-gray-200">
+            <div class="flex flex-col h-full">
+                <h2 class="text-lg font-semibold text-gray-900 mb-2">Legal Categories</h2>
+                <p class="text-xs sm:text-sm text-gray-600 mb-4">Select relevant categories for your query</p>
+                <div id="categories" class="flex flex-wrap gap-1.5 sm:gap-2 overflow-y-auto flex-grow"></div>
+            </div>
+        </aside>
+
+        <!-- Chat Area -->
+        <section class="flex-1 flex flex-col bg-white">
+            <div id="chat-messages" class="flex-1 p-6 space-y-4 overflow-y-auto">
+                <!-- Welcome Message -->
+                <div class="bot-message message-bubble p-4 rounded-lg shadow-sm">
+                    <p class="font-medium">👋 Welcome to right.ed!</p>
+                    <p class="text-sm mt-2">Select relevant legal categories and ask your question to get started.</p>
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="border-t border-gray-200 p-4 bg-white">
+                <div class="flex items-center space-x-3 max-w-4xl mx-auto">
+                    <textarea 
+                        id="query-input"
+                        class="flex-1 p-4 border border-gray-300 rounded-lg focus:outline-none focus:border-[#234441]"
+                        placeholder="Type your legal question here..."
+                    ></textarea>
+                    <button 
+                        id="send-button"
+                        class="px-6 py-3 bg-[#234441] text-white rounded-lg hover:bg-[#1a3331] transition-colors flex items-center space-x-2"
+                    >
+                        <span>Send</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Info Sidebar -->
+        <aside id="info-sidebar" class="sidebar right-sidebar w-full md:w-1/4 bg-white p-4 lg:p-6 border-l border-gray-200">
+            <div class="flex flex-col h-full">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">Additional Information</h2>
+                <div class="mb-4 flex flex-wrap gap-2">
+                    <button id="toggle-sources" class="info-tab flex-1 px-4 py-2 rounded-lg text-sm font-medium active">Sources</button>
+                    <button id="toggle-web-results" class="info-tab flex-1 px-4 py-2 rounded-lg text-sm font-medium">Web</button>
+                    <button id="toggle-court-cases" class="info-tab flex-1 px-4 py-2 rounded-lg text-sm font-medium">Cases</button>
+                </div>
+                <div class="flex-1 overflow-y-auto">
+                    <div id="sources-container" class="space-y-4"></div>
+                    <div id="web-results-container" class="space-y-4 hidden"></div>
+                    <div id="court-cases-container" class="space-y-4 hidden"></div>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <!-- Category Selection Modal -->
+    <div id="category-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl p-6 max-w-sm mx-4 shadow-xl">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">Select Categories</h3>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-gray-500">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <p class="text-gray-600 mb-6">Please select at least one legal category to help us provide more accurate responses.</p>
+            <button onclick="closeModal()" class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                Got it
+            </button>
+        </div>
+    </div>
+
+<script>
+    const NGROK_URL = 'https://lawbert.ngrok.app';
+    const BACKEND_URL = 'https://lawbert.ngrok.app';
+
+    // DOM Elements
+    const categoriesContainer = document.getElementById('categories');
+    const chatMessages = document.getElementById('chat-messages');
+    const queryInput = document.getElementById('query-input');
+    const sendButton = document.getElementById('send-button');
+    const sourcesContainer = document.getElementById('sources-container');
+    const webResultsContainer = document.getElementById('web-results-container');
+    const courtCasesContainer = document.getElementById('court-cases-container');
+    const toggleSourcesButton = document.getElementById('toggle-sources');
+    const toggleWebResultsButton = document.getElementById('toggle-web-results');
+    const toggleCourtCasesButton = document.getElementById('toggle-court-cases');
+    const modal = document.getElementById('category-modal');
+
+    // Mobile Elements
+    const toggleCategoriesBtn = document.getElementById('toggle-categories');
+    const toggleInfoBtn = document.getElementById('toggle-info');
+    const categoriesSidebar = document.getElementById('categories-sidebar');
+    const infoSidebar = document.getElementById('info-sidebar');
+    const overlay = document.getElementById('overlay');
+    const closeButtons = document.querySelectorAll('.close-sidebar');
+
+    let selectedCategories = [];
+
+    // Mobile Navigation Functions
+    function toggleSidebar(sidebar) {
+        const isActive = sidebar.classList.contains('active');
+
+        // Close any open sidebar first
+        categoriesSidebar.classList.remove('active');
+        infoSidebar.classList.remove('active');
+        overlay.classList.remove('active');
+
+        if (!isActive) {
+            sidebar.classList.add('active');
+            overlay.classList.add('active');
+        }
+    }
+
+    // Event Listeners for Mobile Navigation
+    toggleCategoriesBtn.addEventListener('click', () => toggleSidebar(categoriesSidebar));
+    toggleInfoBtn.addEventListener('click', () => toggleSidebar(infoSidebar));
+
+    overlay.addEventListener('click', () => {
+        categoriesSidebar.classList.remove('active');
+        infoSidebar.classList.remove('active');
+        overlay.classList.remove('active');
+    });
+
+    closeButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            categoriesSidebar.classList.remove('active');
+            infoSidebar.classList.remove('active');
+            overlay.classList.remove('active');
+        });
+    });
+
+    // Handle window resize
+    window.addEventListener('resize', () => {
+        if (window.innerWidth >= 768) {
+            categoriesSidebar.classList.remove('active');
+            infoSidebar.classList.remove('active');
+            overlay.classList.remove('active');
+        }
+    });
+
+    // Category Functions
+    async function fetchCategories() {
+        try {
+            console.log('Fetching categories from:', `${NGROK_URL}/categories`);
+            const response = await fetchWithCORS(`${NGROK_URL}/categories`, {
+                method: 'GET'
+            });
+
+            if (response.error) {
+                throw new Error(response.error);
+            }
+
+            console.log('Received categories:', response);
+            createCategoryButtons(response);
+        } catch (error) {
+            console.error('Error fetching categories:', error);
+            categoriesContainer.innerHTML = `
+                <div class="text-red-600 p-4 rounded-lg bg-red-50">
+                    Error loading categories. Please refresh the page to try again.
+                    Error: ${error.message}
+                </div>
+            `;
+        }
+    }
+
+    function createCategoryButtons(categories) {
+        categoriesContainer.innerHTML = '';
+        categories.forEach(category => {
+            const button = document.createElement('button');
+            button.textContent = category.replace(/_/g, ' ');
+            button.dataset.category = category;
+            button.classList.add(
+                'category-chip',
+                'px-4',
+                'py-2',
+                'rounded-lg',
+                'text-sm',
+                'font-medium',
+                'bg-gray-100',
+                'text-gray-700',
+                'hover:bg-gray-200',
+                'transition-all'
+            );
+            button.addEventListener('click', () => toggleCategory(button, category));
+            categoriesContainer.appendChild(button);
+        });
+    }
+
+    function toggleCategory(button, category) {
+        button.classList.toggle('selected');
+        if (selectedCategories.includes(category)) {
+            selectedCategories = selectedCategories.filter(c => c !== category);
+        } else {
+            selectedCategories.push(category);
+        }
+    }
+
+    // Query Input Functions
+    queryInput.addEventListener('input', function() {
+        this.style.height = 'auto';
+        const newHeight = Math.min(this.scrollHeight, 200);
+        this.style.height = newHeight + 'px';
+    });
+
+    // Send Query Functions
+    async function sendQuery() {
+        const query = queryInput.value.trim();
+        if (!checkCategorySelection() || query === '') {
+            return;
+        }
+
+        console.log('Sending query:', query);
+        console.log('Selected categories:', selectedCategories);
+
+        // Disable input and button while processing
+        queryInput.disabled = true;
+        sendButton.disabled = true;
+        sendButton.classList.add('opacity-50');
+
+        addMessage('user', query);
+        queryInput.value = '';
+        queryInput.style.height = '56px'; // Reset height
+
+        try {
+            const requestBody = {
+                question: query,
+                categories: selectedCategories
+            };
+
+            console.log('Sending request to:', `${BACKEND_URL}/query`);
+            console.log('Request body:', requestBody);
+
+            const result = await fetchWithCORS(`${BACKEND_URL}/query`, {
+                method: 'POST',
+                body: JSON.stringify(requestBody)
+            });
+
+            console.log('Received response:', result);
+
+            if (result.error) {
+                throw new Error(result.error);
+            }
+
+            addMessage('bot', result.answer);
+            displaySources(result.source_documents || []);
+            displayWebResults(result.web_results || []);
+            displayCourtCases(result.case_law || []);
+
+        } catch (error) {
+            console.error('Error sending query:', error);
+            addMessage('bot', `Sorry, an error occurred while processing your query. Please try again later. (Error: ${error.message})`);
+        } finally {
+            // Re-enable input and button
+            queryInput.disabled = false;
+            sendButton.disabled = false;
+            sendButton.classList.remove('opacity-50');
+            queryInput.focus();
+        }
+    }
+
+    sendButton.addEventListener('click', sendQuery);
+    queryInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendQuery();
+        }
+    });
+
+    // Display Functions
+    function addMessage(sender, content) {
+        const messageDiv = document.createElement('div');
+        messageDiv.classList.add(
+            'message-bubble',
+            sender === 'user' ? 'user-message' : 'bot-message',
+            'p-4',
+            'rounded-lg',
+            'shadow-sm'
+        );
+
+        const converter = new showdown.Converter();
+        const htmlContent = converter.makeHtml(content);
+
+        const contentDiv = document.createElement('div');
+        contentDiv.classList.add('message-content');
+        contentDiv.innerHTML = htmlContent;
+
+        messageDiv.appendChild(contentDiv);
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function displaySources(sources) {
+        sourcesContainer.innerHTML = '';
+        sources.forEach(source => {
+            const sourceDiv = document.createElement('div');
+            sourceDiv.classList.add(
+                'source-card',
+                'bg-gray-50',
+                'p-4',
+                'rounded-lg',
+                'shadow-sm',
+                'transition-all'
+            );
+            sourceDiv.innerHTML = `
+                <h3 class="font-semibold text-gray-900">${source.source}</h3>
+                <p class="text-sm text-gray-500 mt-1">Page ${source.page}</p>
+                <p class="mt-3 text-gray-700">${source.content}</p>
+            `;
+            sourcesContainer.appendChild(sourceDiv);
+        });
+    }
+
+    function displayWebResults(results) {
+        webResultsContainer.innerHTML = '';
+        results.forEach(result => {
+            const resultDiv = document.createElement('div');
+            resultDiv.classList.add(
+                'source-card',
+                'bg-gray-50',
+                'p-4',
+                'rounded-lg',
+                'shadow-sm',
+                'transition-all'
+            );
+            resultDiv.innerHTML = `
+                <a href="${result.link}" target="_blank" class="font-semibold text-[#234441] hover:underline">${result.title}</a>
+                <p class="mt-2 text-gray-700">${result.snippet}</p>
+            `;
+            webResultsContainer.appendChild(resultDiv);
+        });
+    }
+
+    function displayCourtCases(cases) {
+        courtCasesContainer.innerHTML = '';
+        cases.forEach(case_law => {
+            const caseDiv = document.createElement('div');
+            caseDiv.classList.add(
+                'source-card',
+                'bg-gray-50',
+                'p-4',
+                'rounded-lg',
+                'shadow-sm',
+                'transition-all'
+            );
+            caseDiv.innerHTML = `
+                <a href="${case_law.url}" target="_blank" class="font-semibold text-[#234441] hover:underline">${case_law.name}</a>
+                <div class="mt-2 space-y-1">
+                    <p class="text-sm text-gray-500">Citation: ${case_law.citation}</p>
+                    <p class="text-sm text-gray-500">Date Decided: ${case_law.date_decided}</p>
+                    <p class="text-sm text-gray-500">Court: ${case_law.court}</p>
+                </div>
+                <p class="mt-3 text-gray-700">${case_law.snippet}</p>
+            `;
+            courtCasesContainer.appendChild(caseDiv);
+        });
+    }
+
+    // Info Tab Functions
+    function toggleAdditionalInfo(type) {
+        sourcesContainer.classList.add('hidden');
+        webResultsContainer.classList.add('hidden');
+        courtCasesContainer.classList.add('hidden');
+
+        toggleSourcesButton.classList.remove('active');
+        toggleWebResultsButton.classList.remove('active');
+        toggleCourtCasesButton.classList.remove('active');
+
+        if (type === 'sources') {
+            sourcesContainer.classList.remove('hidden');
+            toggleSourcesButton.classList.add('active');
+        } else if (type === 'web-results') {
+            webResultsContainer.classList.remove('hidden');
+            toggleWebResultsButton.classList.add('active');
+        } else if (type === 'court-cases') {
+            courtCasesContainer.classList.remove('hidden');
+            toggleCourtCasesButton.classList.add('active');
+        }
+    }
+
+    toggleSourcesButton.addEventListener('click', () => toggleAdditionalInfo('sources'));
+    toggleWebResultsButton.addEventListener('click', () => toggleAdditionalInfo('web-results'));
+    toggleCourtCasesButton.addEventListener('click', () => toggleAdditionalInfo('court-cases'));
+
+    // Modal Functions
+    function showModal() {
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+        modal.classList.add('hidden');
+        document.body.style.overflow = 'auto';
+        if (window.innerWidth < 768) {
+            toggleSidebar(categoriesSidebar);
+        }
+    }
+
+    function checkCategorySelection() {
+        if (selectedCategories.length === 0) {
+            showModal();
+            return false;
+        }
+        return true;
+    }
+
+    // Close modal on escape key
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape' && !modal.classList.contains('hidden')) {
+            closeModal();
+        }
+    });
+
+    // Close modal when clicking outside
+    modal.addEventListener('click', function(event) {
+        if (event.target === modal) {
+            closeModal();
+        }
+    });
+
+    // CORS Helper Function
+    async function fetchWithCORS(url, options = {}) {
+        const headers = {
+            'Content-Type': 'application/json',
+            ...options.headers
+        };
+
+        const defaultOptions = {
+            mode: 'cors',
+            credentials: 'include',
+            headers
+        };
+
+        const mergedOptions = {
+            ...defaultOptions,
+            ...options,
+            headers
+        };
+
+        try {
+            console.log('Sending request with options:', mergedOptions);
+            const response = await fetch(url, mergedOptions);
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('Response not OK:', {
+                    status: response.status,
+                    statusText: response.statusText,
+                    errorText
+                });
+                throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+            }
+
+            return await response.json();
+        } catch (e) {
+            console.error('Fetch error:', e);
+            if (e.message.includes('Failed to fetch')) {
+                console.warn('CORS request failed, attempting no-cors mode');
+                mergedOptions.mode = 'no-cors';
+                const response = await fetch(url, mergedOptions);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response;
+            }
+            throw e;
+        }
+    }
+
+    // Initialize the application
+    fetchCategories();
+    </script>
+</body>
+</html>
