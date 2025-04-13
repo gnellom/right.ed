@@ -116,10 +116,7 @@
         }
 
         main {
-            height: 100vh;
-            padding-top: 64px;
-            margin-top: 0;
-            overflow-y: hidden;
+            height: calc(100% - 64px);
         }
 
         #chat-messages {
@@ -232,8 +229,8 @@
         </aside>
 
         <!-- Chat Area -->
-        <section class="flex-1 flex flex-col bg-white h-full">
-            <div id="chat-messages" class="flex-1 p-3 sm:p-4 md:p-6 space-y-4 overflow-y-auto pb-2">
+        <section class="flex-1 flex flex-col bg-white">
+            <div id="chat-messages" class="flex-grow p-3 sm:p-4 md:p-6 space-y-4 overflow-y-auto">
                 <!-- Welcome Message -->
                 <div class="bot-message message-bubble p-4 rounded-lg shadow-sm">
                     <p class="font-medium">👋 Welcome to right.ed!</p>
@@ -242,11 +239,11 @@
             </div>
             
             <!-- Input Area -->
-            <div class="border-t border-gray-200 p-2 sm:p-4 bg-white sticky bottom-0 z-10">
+            <div class="p-3 sm:p-4 bg-white border-t border-gray-200">
                 <div class="flex items-center space-x-3 max-w-4xl mx-auto">
                     <textarea 
                         id="query-input"
-                        class="flex-1 p-2 sm:p-4 border border-gray-300 rounded-lg focus:outline-none focus:border-[#234441] text-sm sm:text-base"
+                        class="flex-grow p-2 sm:p-4 border border-gray-300 rounded-lg focus:outline-none focus:border-[#234441] text-sm sm:text-base"
                         placeholder="Type your legal question here..."
                     ></textarea>
                     <button 
