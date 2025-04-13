@@ -2,7 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>right.ed - Learning Law Made Simple</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
@@ -245,12 +247,13 @@
                         id="query-input"
                         class="flex-grow p-2 sm:p-4 border border-gray-300 rounded-lg focus:outline-none focus:border-[#234441] text-sm sm:text-base"
                         placeholder="Type your legal question here..."
+                        rows="1"
                     ></textarea>
                     <button 
                         id="send-button"
-                        class="px-3 sm:px-6 py-2 sm:py-3 bg-[#234441] text-white rounded-lg hover:bg-[#1a3331] transition-colors flex items-center space-x-1 sm:space-x-2"
+                        class="shrink-0 px-3 sm:px-6 py-2 sm:py-3 bg-[#234441] text-white rounded-lg hover:bg-[#1a3331] transition-colors flex items-center space-x-1 sm:space-x-2"
                     >
-                        <span>Send</span>
+                        <span class="hidden sm:inline">Send</span>
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
                         </svg>
