@@ -177,6 +177,10 @@
             .message-bubble {
                 max-width: 90%;
             }
+            
+            main {
+                padding-bottom: 0;
+            }
         }
     </style>
 </head>
@@ -226,7 +230,7 @@
 
         <!-- Chat Area -->
         <section class="flex-1 flex flex-col bg-white">
-            <div id="chat-messages" class="flex-1 p-3 sm:p-4 md:p-6 space-y-4 overflow-y-auto">
+            <div id="chat-messages" class="flex-grow p-3 sm:p-4 md:p-6 space-y-4 overflow-y-auto">
                 <!-- Welcome Message -->
                 <div class="bot-message message-bubble p-4 rounded-lg shadow-sm">
                     <p class="font-medium">👋 Welcome to right.ed!</p>
@@ -235,11 +239,11 @@
             </div>
             
             <!-- Input Area -->
-            <div class="border-t border-gray-200 p-4 bg-white">
+            <div class="p-3 sm:p-4 bg-white border-t border-gray-200">
                 <div class="flex items-center space-x-3 max-w-4xl mx-auto">
                     <textarea 
                         id="query-input"
-                        class="flex-1 p-2 sm:p-4 border border-gray-300 rounded-lg focus:outline-none focus:border-[#234441] text-sm sm:text-base"
+                        class="flex-grow p-2 sm:p-4 border border-gray-300 rounded-lg focus:outline-none focus:border-[#234441] text-sm sm:text-base"
                         placeholder="Type your legal question here..."
                     ></textarea>
                     <button 
@@ -423,6 +427,13 @@
                 selectedCategories = selectedCategories.filter(c => c !== category);
             } else {
                 selectedCategories.push(category);
+                // Track category selection
+                if (window.va) {
+                    window.va('event', {
+                        name: 'category_selected',
+                        category: category
+                    });
+                }
             }
         }
 
@@ -442,6 +453,15 @@
 
             console.log('Sending query:', query);
             console.log('Selected categories:', selectedCategories);
+
+            // Track query submission
+            if (window.va) {
+                window.va('event', {
+                    name: 'query_submitted',
+                    query_length: query.length,
+                    categories_count: selectedCategories.length
+                });
+            }
 
             // Disable input and button while processing
             queryInput.disabled = true;
@@ -477,9 +497,27 @@
                 displayWebResults(result.web_results || []);
                 displayCourtCases(result.case_law || []);
 
+                // Track successful response
+                if (window.va) {
+                    window.va('event', {
+                        name: 'query_response_received',
+                        has_sources: (result.source_documents || []).length > 0,
+                        has_web_results: (result.web_results || []).length > 0,
+                        has_court_cases: (result.case_law || []).length > 0
+                    });
+                }
+
             } catch (error) {
                 console.error('Error sending query:', error);
                 addMessage('bot', `Sorry, an error occurred while processing your query. Please try again later. (Error: ${error.message})`);
+                
+                // Track error
+                if (window.va) {
+                    window.va('event', {
+                        name: 'query_error',
+                        error_type: error.message
+                    });
+                }
             } finally {
                 // Re-enable input and button
                 queryInput.disabled = false;
@@ -611,12 +649,33 @@
             if (type === 'sources') {
                 sourcesContainer.classList.remove('hidden');
                 toggleSourcesButton.classList.add('active');
+                // Track info tab change
+                if (window.va) {
+                    window.va('event', {
+                        name: 'info_tab_changed',
+                        tab: 'sources'
+                    });
+                }
             } else if (type === 'web-results') {
                 webResultsContainer.classList.remove('hidden');
                 toggleWebResultsButton.classList.add('active');
+                // Track info tab change
+                if (window.va) {
+                    window.va('event', {
+                        name: 'info_tab_changed',
+                        tab: 'web_results'
+                    });
+                }
             } else if (type === 'court-cases') {
                 courtCasesContainer.classList.remove('hidden');
                 toggleCourtCasesButton.classList.add('active');
+                // Track info tab change
+                if (window.va) {
+                    window.va('event', {
+                        name: 'info_tab_changed',
+                        tab: 'court_cases'
+                    });
+                }
             }
         }
 
