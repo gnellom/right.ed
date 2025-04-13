@@ -114,7 +114,7 @@
 
         html, body {
             height: 100%;
-            overflow: hidden;
+            /* Removed overflow: hidden to allow natural scrolling */
         }
 
         main {
@@ -180,8 +180,21 @@
                 max-width: 90%;
             }
             
-            main {
-                padding-bottom: 0;
+            /* Force input to be visible on mobile */
+            .input-container {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background-color: white;
+                border-top: 1px solid #e5e7eb;
+                z-index: 999;
+                padding: 8px;
+            }
+            
+            /* Add padding to messages to prevent them from being hidden behind input */
+            #chat-messages {
+                padding-bottom: 80px !important;
             }
         }
     </style>
