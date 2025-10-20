@@ -14,12 +14,12 @@ export function Stats() {
     },
     {
       icon: Search,
-      value: "10K+",
+      value: "100+",
       label: "Searches Daily"
     },
     {
       icon: Zap,
-      value: "<2s",
+      value: "<12s",
       label: "Avg Response Time"
     }
   ];
