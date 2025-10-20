@@ -32,6 +32,12 @@
             transition: all 0.2s ease;
             transform: scale(1);
             border: 1px solid var(--border);
+            width: 100%;
+            text-align: center;
+            justify-content: center;
+            min-height: 44px;
+            font-weight: 500;
+            letter-spacing: 0.025em;
         }
         
         .category-chip:hover {
@@ -286,7 +292,7 @@
                 </div>
                 <p class="text-sm text-gray-600">Select relevant categories to get more accurate responses</p>
             </div>
-            <div id="categories" class="flex flex-wrap gap-2 overflow-y-auto h-full"></div>
+            <div id="categories" class="flex flex-col gap-2 overflow-y-auto h-full"></div>
         </aside>
 
         <!-- Chat Area -->
@@ -502,7 +508,7 @@
                 button.classList.add(
                     'category-chip',
                     'px-4',
-                    'py-2',
+                    'py-3',
                     'rounded-lg',
                     'text-sm',
                     'font-medium',
@@ -510,7 +516,9 @@
                     'text-gray-700',
                     'hover:bg-blue-50',
                     'transition-all',
-                    'border'
+                    'border',
+                    'flex',
+                    'items-center'
                 );
                 button.addEventListener('click', () => toggleCategory(button, category));
                 categoriesContainer.appendChild(button);
