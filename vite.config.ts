@@ -52,7 +52,10 @@
     build: {
       target: 'esnext',
       outDir: 'build',
+      assetsDir: 'assets',
+      copyPublicDir: true,
     },
+    publicDir: 'public',
     server: {
       port: 3000,
       open: true,

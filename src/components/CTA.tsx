@@ -15,7 +15,7 @@ export function CTA() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button size="lg" variant="secondary" className="gap-2 px-8 py-6" asChild>
-              <a href="/app.html">
+              <a href="app.html">
                 Get Started Free
                 <ArrowRight className="w-4 h-4" />
               </a>

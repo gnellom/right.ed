@@ -31,7 +31,7 @@ export function Hero() {
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Button size="lg" className="gap-2 px-8 py-6" asChild>
-              <a href="/app.html">
+              <a href="app.html">
                 Start Researching Free
                 <ArrowRight className="w-4 h-4" />
               </a>
