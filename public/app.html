@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>right.ed - Learning Law Made Simple</title>
+    <title>right.ed - Maryland Legal Knowledge, AI-Powered</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
     <style>
@@ -15,19 +15,36 @@
             font-family: 'Inter', sans-serif;
         }
 
+        /* Modern color scheme matching landing page */
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #6366f1;
+            --accent: #3b82f6;
+            --muted: #64748b;
+            --muted-foreground: #94a3b8;
+            --border: #e2e8f0;
+            --background: #ffffff;
+            --card: #f8fafc;
+        }
+
         .category-chip {
             transition: all 0.2s ease;
             transform: scale(1);
+            border: 1px solid var(--border);
         }
         
         .category-chip:hover {
             transform: scale(1.02);
+            border-color: var(--primary);
+            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.15);
         }
         
         .category-chip.selected {
-            background-color: #234441;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             color: white;
-            box-shadow: 0 2px 4px rgba(35, 68, 65, 0.2);
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
         }
 
         #query-input {
@@ -36,15 +53,22 @@
             overflow-y: auto;
             resize: none;
             transition: all 0.2s ease;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            background: var(--background);
         }
 
         #query-input:focus {
-            box-shadow: 0 0 0 3px rgba(35, 68, 65, 0.2);
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
 
         .message-bubble {
             max-width: 85%;
             animation: messageAppear 0.3s ease-out;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
         }
 
         @keyframes messageAppear {
@@ -60,13 +84,16 @@
 
         .user-message {
             margin-left: auto;
-            background: #234441;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             color: white;
+            border-radius: 16px 16px 4px 16px;
         }
 
         .bot-message {
-            background: #f3f4f6;
-            color: #1f2937;
+            background: var(--card);
+            color: #1e293b;
+            border: 1px solid var(--border);
+            border-radius: 16px 16px 16px 4px;
         }
 
         .sidebar-content {
@@ -76,20 +103,28 @@
 
         .info-tab {
             transition: all 0.2s ease;
+            border-radius: 8px;
+            border: 1px solid var(--border);
         }
 
         .info-tab.active {
-            background-color: #234441;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             color: white;
+            border-color: var(--primary);
+            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
         }
 
         .source-card {
             transition: all 0.2s ease;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: var(--background);
         }
 
         .source-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary);
         }
 
         /* Custom scrollbar */
@@ -201,25 +236,27 @@
 </head>
 <body class="bg-gray-50">
     <!-- Modern Header -->
-    <header class="bg-white border-b border-gray-200 fixed top-0 w-full z-50">
+    <header class="bg-white/95 backdrop-blur-sm border-b border-gray-200 fixed top-0 w-full z-50 shadow-sm">
         <div class="container mx-auto px-4 py-4 flex justify-between items-center">
             <div class="flex items-center space-x-4">
-                <button id="toggle-categories" class="md:hidden p-2 hover:bg-gray-100 rounded-lg">
+                <button id="toggle-categories" class="md:hidden p-2 hover:bg-blue-50 rounded-lg transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                     </svg>
                 </button>
-                <div class="flex items-center space-x-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-[#234441]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
-                    </svg>
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
+                        </svg>
+                    </div>
                     <div>
-                        <h1 class="text-xl font-bold text-gray-900">right.ed</h1>
-                        <p class="text-sm text-gray-500 hidden sm:block">Learning Law Made Simple</p>
+                        <h1 class="text-xl font-bold text-gray-900 tracking-tight">right.ed</h1>
+                        <p class="text-sm text-blue-600 font-medium hidden sm:block">Maryland Legal Knowledge, AI-Powered</p>
                     </div>
                 </div>
             </div>
-            <button id="toggle-info" class="md:hidden p-2 hover:bg-gray-100 rounded-lg">
+            <button id="toggle-info" class="md:hidden p-2 hover:bg-blue-50 rounded-lg transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
@@ -238,37 +275,62 @@
                 <h2 class="text-lg font-semibold text-gray-900">Legal Categories</h2>
                 <button class="close-sidebar p-1 text-gray-500 hover:text-gray-700">✕</button>
             </div>
-            <h2 class="text-lg font-semibold text-gray-900 mb-2 hidden md:block">Legal Categories</h2>
-            <p class="text-xs sm:text-sm text-gray-600 mb-4">Select relevant categories for your query</p>
-            <div id="categories" class="flex flex-wrap gap-1.5 sm:gap-2 overflow-y-auto h-full"></div>
+            <div class="hidden md:block mb-6">
+                <div class="flex items-center gap-2 mb-3">
+                    <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                        </svg>
+                    </div>
+                    <h2 class="text-lg font-semibold text-gray-900">Legal Categories</h2>
+                </div>
+                <p class="text-sm text-gray-600">Select relevant categories to get more accurate responses</p>
+            </div>
+            <div id="categories" class="flex flex-wrap gap-2 overflow-y-auto h-full"></div>
         </aside>
 
         <!-- Chat Area -->
-        <section class="flex-1 flex flex-col bg-white">
+        <section class="flex-1 flex flex-col bg-gradient-to-br from-blue-50/30 via-white to-indigo-50/30">
             <div id="chat-messages" class="flex-grow p-3 sm:p-4 md:p-6 space-y-4 overflow-y-auto">
                 <!-- Welcome Message -->
-                <div class="bot-message message-bubble p-4 rounded-lg shadow-sm">
-                    <p class="font-medium">👋 Welcome to right.ed!</p>
-                    <p class="text-sm mt-2">Select relevant legal categories and ask your question to get started.</p>
+                <div class="bot-message message-bubble p-6 rounded-2xl shadow-sm">
+                    <div class="flex items-start gap-3">
+                        <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center flex-shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-gray-900">Welcome to right.ed!</p>
+                            <p class="text-sm mt-2 text-gray-600">I'm your AI-powered legal research assistant. Select relevant legal categories and ask your question to get started with Maryland law research.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
             
             <!-- Input Area -->
-            <div class="input-container border-t border-gray-200 p-3 sm:p-4 bg-white">
-                <div class="flex items-center space-x-3 max-w-4xl mx-auto">
-                    <textarea 
-                        id="query-input"
-                        class="flex-grow p-2 sm:p-4 border border-gray-300 rounded-lg focus:outline-none focus:border-[#234441] text-sm sm:text-base"
-                        placeholder="Type your legal question here..."
-                        rows="1"
-                    ></textarea>
+            <div class="input-container border-t border-gray-200 p-3 sm:p-4 bg-white/95 backdrop-blur-sm">
+                <div class="flex items-end space-x-3 max-w-4xl mx-auto">
+                    <div class="flex-grow relative">
+                        <textarea 
+                            id="query-input"
+                            class="w-full p-4 pr-12 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 text-sm sm:text-base resize-none transition-all"
+                            placeholder="Ask your Maryland legal question here..."
+                            rows="1"
+                        ></textarea>
+                        <div class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                            </svg>
+                        </div>
+                    </div>
                     <button 
                         id="send-button"
-                        class="shrink-0 px-3 sm:px-6 py-2 sm:py-3 bg-[#234441] text-white rounded-lg hover:bg-[#1a3331] transition-colors flex items-center space-x-1 sm:space-x-2"
+                        class="shrink-0 px-6 py-4 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl hover:from-blue-600 hover:to-indigo-700 transition-all duration-200 flex items-center space-x-2 shadow-lg hover:shadow-xl transform hover:scale-105"
                     >
-                        <span class="hidden sm:inline">Send</span>
+                        <span class="hidden sm:inline font-medium">Send</span>
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                         </svg>
                     </button>
                 </div>
@@ -281,7 +343,17 @@
                 <h2 class="text-lg font-semibold text-gray-900">Additional Information</h2>
                 <button class="close-sidebar p-1 text-gray-500 hover:text-gray-700">✕</button>
             </div>
-            <h2 class="text-lg font-semibold text-gray-900 mb-4 hidden md:block">Additional Information</h2>
+            <div class="hidden md:block mb-6">
+                <div class="flex items-center gap-2 mb-3">
+                    <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                    </div>
+                    <h2 class="text-lg font-semibold text-gray-900">Research Sources</h2>
+                </div>
+                <p class="text-sm text-gray-600">View sources, web results, and court cases</p>
+            </div>
             <div class="mb-4 flex flex-wrap gap-2">
                 <button id="toggle-sources" class="info-tab flex-1 px-4 py-2 rounded-lg text-sm font-medium active">Sources</button>
                 <button id="toggle-web-results" class="info-tab flex-1 px-4 py-2 rounded-lg text-sm font-medium">Web</button>
@@ -296,18 +368,25 @@
     </main>
 
     <!-- Category Selection Modal -->
-    <div id="category-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
-        <div class="bg-white rounded-xl p-6 max-w-sm mx-4 shadow-xl">
+    <div id="category-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center z-50">
+        <div class="bg-white rounded-2xl p-6 max-w-sm mx-4 shadow-2xl border border-gray-200">
             <div class="flex items-center justify-between mb-4">
-                <h3 class="text-lg font-semibold text-gray-900">Select Categories</h3>
-                <button onclick="closeModal()" class="text-gray-400 hover:text-gray-500">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900">Select Categories</h3>
+                </div>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-gray-500 p-1 rounded-lg hover:bg-gray-100 transition-colors">
                     <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
             </div>
-            <p class="text-gray-600 mb-6">Please select at least one legal category to help us provide more accurate responses.</p>
-            <button onclick="closeModal()" class="w-full px-4 py-2 bg-[#234441] text-white rounded-lg hover:bg-[#1a3331] transition-colors">
+            <p class="text-gray-600 mb-6">Please select at least one legal category to help us provide more accurate responses for your Maryland legal question.</p>
+            <button onclick="closeModal()" class="w-full px-4 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl hover:from-blue-600 hover:to-indigo-700 transition-all duration-200 font-medium shadow-lg hover:shadow-xl">
                 Got it
             </button>
         </div>
@@ -427,10 +506,11 @@
                     'rounded-lg',
                     'text-sm',
                     'font-medium',
-                    'bg-gray-100',
+                    'bg-gray-50',
                     'text-gray-700',
-                    'hover:bg-gray-200',
-                    'transition-all'
+                    'hover:bg-blue-50',
+                    'transition-all',
+                    'border'
                 );
                 button.addEventListener('click', () => toggleCategory(button, category));
                 categoriesContainer.appendChild(button);
@@ -580,22 +660,31 @@
                 const sourceDiv = document.createElement('div');
                 sourceDiv.classList.add(
                     'source-card',
-                    'bg-gray-50',
                     'p-4',
-                    'rounded-lg',
+                    'rounded-xl',
                     'shadow-sm',
-                    'transition-all'
+                    'transition-all',
+                    'border'
                 );
                 sourceDiv.innerHTML = `
-                    <h3 class="font-semibold text-gray-900">${source.source}</h3>
-                    <p class="text-sm text-gray-500 mt-1">Page ${source.page}</p>
-                    <p class="mt-3 text-gray-700">${source.content}</p>
+                    <div class="flex items-start gap-3">
+                        <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="font-semibold text-gray-900">${source.source}</h3>
+                            <p class="text-sm text-blue-600 mt-1">Page ${source.page}</p>
+                            <p class="mt-3 text-gray-700 leading-relaxed">${source.content}</p>
+                        </div>
+                    </div>
                 `;
                 sourcesContainer.appendChild(sourceDiv);
             });
             
             if (sources.length === 0) {
-                sourcesContainer.innerHTML = '<p class="text-gray-500 italic">No source documents available for this query.</p>';
+                sourcesContainer.innerHTML = '<div class="text-center py-8"><p class="text-gray-500 italic">No source documents available for this query.</p></div>';
             }
         }
 
@@ -605,21 +694,30 @@
                 const resultDiv = document.createElement('div');
                 resultDiv.classList.add(
                     'source-card',
-                    'bg-gray-50',
                     'p-4',
-                    'rounded-lg',
+                    'rounded-xl',
                     'shadow-sm',
-                    'transition-all'
+                    'transition-all',
+                    'border'
                 );
                 resultDiv.innerHTML = `
-                    <a href="${result.link}" target="_blank" class="font-semibold text-[#234441] hover:underline">${result.title}</a>
-                    <p class="mt-2 text-gray-700">${result.snippet}</p>
+                    <div class="flex items-start gap-3">
+                        <div class="w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9v-9m0-9v9" />
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <a href="${result.link}" target="_blank" class="font-semibold text-blue-600 hover:text-blue-800 hover:underline block">${result.title}</a>
+                            <p class="mt-2 text-gray-700 leading-relaxed">${result.snippet}</p>
+                        </div>
+                    </div>
                 `;
                 webResultsContainer.appendChild(resultDiv);
             });
             
             if (results.length === 0) {
-                webResultsContainer.innerHTML = '<p class="text-gray-500 italic">No web results available for this query.</p>';
+                webResultsContainer.innerHTML = '<div class="text-center py-8"><p class="text-gray-500 italic">No web results available for this query.</p></div>';
             }
         }
 
@@ -629,26 +727,35 @@
                 const caseDiv = document.createElement('div');
                 caseDiv.classList.add(
                     'source-card',
-                    'bg-gray-50',
                     'p-4',
-                    'rounded-lg',
+                    'rounded-xl',
                     'shadow-sm',
-                    'transition-all'
+                    'transition-all',
+                    'border'
                 );
                 caseDiv.innerHTML = `
-                    <a href="${case_law.url}" target="_blank" class="font-semibold text-[#234441] hover:underline">${case_law.name}</a>
-                    <div class="mt-2 space-y-1">
-                        <p class="text-sm text-gray-500">Citation: ${case_law.citation}</p>
-                        <p class="text-sm text-gray-500">Date Decided: ${case_law.date_decided}</p>
-                        <p class="text-sm text-gray-500">Court: ${case_law.court}</p>
+                    <div class="flex items-start gap-3">
+                        <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <a href="${case_law.url}" target="_blank" class="font-semibold text-blue-600 hover:text-blue-800 hover:underline block">${case_law.name}</a>
+                            <div class="mt-2 space-y-1">
+                                <p class="text-sm text-purple-600 font-medium">Citation: ${case_law.citation}</p>
+                                <p class="text-sm text-gray-500">Date Decided: ${case_law.date_decided}</p>
+                                <p class="text-sm text-gray-500">Court: ${case_law.court}</p>
+                            </div>
+                            <p class="mt-3 text-gray-700 leading-relaxed">${case_law.snippet}</p>
+                        </div>
                     </div>
-                    <p class="mt-3 text-gray-700">${case_law.snippet}</p>
                 `;
                 courtCasesContainer.appendChild(caseDiv);
             });
             
             if (cases.length === 0) {
-                courtCasesContainer.innerHTML = '<p class="text-gray-500 italic">No court cases available for this query.</p>';
+                courtCasesContainer.innerHTML = '<div class="text-center py-8"><p class="text-gray-500 italic">No court cases available for this query.</p></div>';
             }
         }
 
