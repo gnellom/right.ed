@@ -11,7 +11,7 @@ export function Footer() {
           </div>
           
           <div className="flex flex-wrap justify-center gap-8 text-sm text-muted-foreground">
-            <a href="#" className="hover:text-foreground transition-colors">About</a>
+            <a href="about.html" className="hover:text-foreground transition-colors">About</a>
             <a href="#" className="hover:text-foreground transition-colors">Documentation</a>
             <a href="#" className="hover:text-foreground transition-colors">Privacy Policy</a>
             <a href="#" className="hover:text-foreground transition-colors">Terms of Service</a>

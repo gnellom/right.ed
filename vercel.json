@@ -5,6 +5,10 @@
     {
       "source": "/app.html",
       "destination": "/app.html"
+    },
+    {
+      "source": "/about.html",
+      "destination": "/about.html"
     }
   ],
   "headers": [
